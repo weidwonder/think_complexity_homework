@@ -109,3 +109,60 @@ class Graph(dict):
             return vs
         vs = set(vs) | set([_.keys() for _ in vs])
         return list(vs)
+
+    def edges(self):
+        """ Get all edges in this Graph as a list.
+        """
+        edges = set()
+        for ws in self.itervalues():
+            for e in ws.itervalues():
+                edges.add(e)
+        return list(edges)
+
+    def out_vertices(self, v):
+        """ Get all vertices connect to v directly.
+        """
+        vertices = self.get(v, {}).keys()
+        return vertices
+
+    def out_edges(self, v):
+        """ Get all edges connected to v.
+        """
+        edges = self.get(v, {}).values()
+        return edges
+
+    def add_all_edges(self):
+        """ add edges to Graph to make graph complete graph.
+        """
+        all_vertices = set(self.vertices())
+        for v in all_vertices:
+            v_out_vertices = self.get(v)
+            if not v_out_vertices:
+                self[v] = v_out_vertices = {}
+            for w in all_vertices - set(v_out_vertices.keys() + [v]):
+                self.add_edge(Edge(v, w))
+
+
+
+def main(script, *args):
+    v = Vertex('v')
+    print v
+    w = Vertex('w')
+    print w
+    e = Edge(v, w)
+    print e
+    g = Graph([v,w], [e])
+    print g
+
+    va = Vertex('va')
+    e1 = Edge(va, w)
+    g.add_edge(e1)
+    print g.out_edges(w)
+    print g.out_vertices(w)
+    g.add_all_edges()
+    print g.out_edges(v)
+    print g.edges()
+
+if __name__ == '__main__':
+    import sys
+    main(*sys.argv)
