@@ -54,6 +54,8 @@ class Graph(dict):
         es: list of edges.
         """
         super(Graph, self).__init__()
+        self.vs = []
+        self.es = []
         vs = vs or []
         es = es or []
         self.directed = directed
@@ -68,19 +70,25 @@ class Graph(dict):
         if v in self.iterkeys():
             return
         self[v] = {}
+        self.vs.append(v)
 
-    def add_edge(self, e):
+    def add_edge(self, e_or_v, w=None):
         """Adds and edge to the graph by adding an entry in both directions.
 
         If there is already an edge connecting these Vertices, the
         new edge replaces it.
         """
-        v, w = e
-        for _ in e:
+        if w:
+            e_or_v = Edge(e_or_v, w)
+        v, w = e_or_v
+        for _ in e_or_v:
             self.add_vertex(_)
-        self[v][w] = e
+        if self[v].get(w):
+            return
+        self[v][w] = e_or_v
         if not self.directed:
-            self[w][v] = e
+            self[w][v] = e_or_v
+        self.es.append(e_or_v)
 
     def get_edge(self, v, w):
         """ Get the edge between vertex v and w.
@@ -94,8 +102,11 @@ class Graph(dict):
         else it returns False.
         """
         try:
+            e = self[v][w]
+            self.es.remove(e)
             del self[v][w]
             if not self.directed:
+                e = self[w][v]
                 del self[w][v]
             return True
         except:
@@ -104,20 +115,12 @@ class Graph(dict):
     def vertices(self):
         """ Get all vertices in this Graph as a list.
         """
-        vs = self.keys()
-        if not self.directed:
-            return vs
-        vs = set(vs) | set([_.keys() for _ in vs])
-        return list(vs)
+        return self.vs
 
     def edges(self):
         """ Get all edges in this Graph as a list.
         """
-        edges = set()
-        for ws in self.itervalues():
-            for e in ws.itervalues():
-                edges.add(e)
-        return list(edges)
+        return self.es
 
     def out_vertices(self, v):
         """ Get all vertices connect to v directly.
@@ -142,6 +145,39 @@ class Graph(dict):
             for w in all_vertices - set(v_out_vertices.keys() + [v]):
                 self.add_edge(Edge(v, w))
 
+    def add_regular_edges(self, k):
+        """ Add edges to Graph to make graph regular graph.
+        """
+        # TODO to make method support graphs has already had edges.
+        if self.es:
+            raise ValueError('This graph already has edges.')
+        num_v = len(self.vs)
+        if not isinstance(k, int) or k < 0 or k > num_v - 1 or num_v * k % 2:
+            raise ValueError('k is wrong. must int and in range of 0 ~ n-1 and nk is even.')
+        is_k_odd = k % 2
+        is_n_odd = num_v % 2
+        if is_n_odd:
+            multiple_2 = k / 2
+            middle_left = num_v / 2
+            for src_i in xrange(num_v):
+                v = self.vs[src_i]
+                for tar_i in xrange(1, 1 + multiple_2):
+                    va = self.vs[(src_i + middle_left - tar_i + 1) % num_v]
+                    vb = self.vs[(src_i + middle_left + tar_i) % num_v]
+                    self.add_edge(v, va)
+                    self.add_edge(v, vb)
+        else:
+            multiple_2 = k / 2
+            middle = num_v / 2
+            for src_i in xrange(num_v):
+                v = self.vs[src_i]
+                for tar_i in xrange(1, 1 + multiple_2):
+                    va = self.vs[(src_i + middle - tar_i) % num_v]
+                    vb = self.vs[(src_i + middle + tar_i) % num_v]
+                    self.add_edge(v, va)
+                    self.add_edge(v, vb)
+                if is_k_odd:
+                    self.add_edge(v, self.vs[(src_i + middle) % num_v])
 
 
 def main(script, *args):
