@@ -84,7 +84,6 @@ class GraphWorld(Gui):
         # copy the positions from the layout into the Vertex objects
         for v in g.vertices():
             v.pos = layout.pos(v)
-
         # draw the edges and store the tags in self.etags, which maps
         # from Edges to their tags
         c = self.canvas

@@ -1,16 +1,19 @@
-d = {}
+# d = {}
+#
+# try:
+#     del d[1]
+# except:
+#     pass
+#
+# d = {
+#     1:{
+#         2: 'x'
+#     }
+# }
+#
+# del d[1][2]
+#
+# print d
+from random import random
 
-try:
-    del d[1]
-except:
-    pass
-
-d = {
-    1:{
-        2: 'x'
-    }
-}
-
-del d[1][2]
-
-print d
+print random()
