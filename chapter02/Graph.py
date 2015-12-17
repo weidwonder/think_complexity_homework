@@ -179,6 +179,17 @@ class Graph(dict):
                 if is_k_odd:
                     self.add_edge(v, self.vs[(src_i + middle) % num_v])
 
+    def is_connected(self):
+        if len(self.vs) <= 1: return True
+        start_node = self.vs[0]
+        to_visit = set(self[start_node].keys())
+        visited = set()
+        while to_visit:
+            start_node = to_visit.pop()
+            visited.add(start_node)
+            to_visit = to_visit | set(self[start_node].keys()) - visited
+        return visited == set(self.vs)
+
 
 def main(script, *args):
     v = Vertex('v')
@@ -199,6 +210,28 @@ def main(script, *args):
     print g.out_edges(v)
     print g.edges()
 
+def test_is_connected(*args):
+    g = Graph()
+    v_list = []
+    for x in range(10):
+        v = Vertex(str(x))
+        g.add_vertex(v)
+        v_list.append(v)
+    g.add_edge(v_list[1], v_list[2])
+    g.add_edge(v_list[3], v_list[4])
+    g.add_edge(v_list[6], v_list[5])
+    g.add_edge(v_list[9], v_list[0])
+    g.add_edge(v_list[2], v_list[3])
+    g.add_edge(v_list[4], v_list[5])
+    g.add_edge(v_list[8], v_list[9])
+    g.add_edge(v_list[1], v_list[0])
+    print g.is_connected()
+
+    g.add_all_edges()
+    print g.is_connected()
+
+
 if __name__ == '__main__':
     import sys
-    main(*sys.argv)
+    # main(*sys.argv)
+    test_is_connected()
