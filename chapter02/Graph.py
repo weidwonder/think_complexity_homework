@@ -153,7 +153,7 @@ class Graph(dict):
             raise ValueError('This graph already has edges.')
         num_v = len(self.vs)
         if not isinstance(k, int) or k < 0 or k > num_v - 1 or num_v * k % 2:
-            raise ValueError('k is wrong. must int and in range of 0 ~ n-1 and nk is even.')
+            raise ValueError('Probability is wrong. must int and in range of 0 ~ n-1 and nk is even.')
         is_k_odd = k % 2
         is_n_odd = num_v % 2
         if is_n_odd:

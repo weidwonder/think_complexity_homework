@@ -11,7 +11,6 @@ class RandomGraph(Graph):
         if self.es:
             raise ValueError('This graph already has edges.')
         num_v = len(self.vs)
-        print type(p)
         if not isinstance(p, float) or p < 0 or p > 1:
             raise ValueError('`p` must be a float in range from 0 to 1.')
         if_connect = lambda : random() < p
